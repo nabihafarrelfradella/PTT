@@ -28,6 +28,21 @@ class User extends Authenticatable
         ];
     }
 
+    protected $appends = [
+        'photo_url',
+    ];
+
+    public function getPhotoUrlAttribute()
+    {
+        if (!empty($this->photo)) {
+            if (str_starts_with($this->photo, 'http://') || str_starts_with($this->photo, 'https://')) {
+                return $this->photo;
+            }
+            return asset('storage/' . ltrim($this->photo, '/'));
+        }
+        return null;
+    }
+
     public function kantin()
     {
         return $this->hasOne(Kantin::class);

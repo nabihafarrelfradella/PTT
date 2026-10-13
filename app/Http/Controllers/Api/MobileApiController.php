@@ -215,6 +215,23 @@ class MobileApiController extends Controller
 
         if ($request->hasFile('foto_menu')) {
             $data['foto_menu'] = $request->file('foto_menu')->store('menu_photos', 'public');
+        } elseif ($request->filled('foto_base64')) {
+            $base64 = $request->foto_base64;
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64, $type)) {
+                $base64 = substr($base64, strpos($base64, ',') + 1);
+                $type = strtolower($type[1]);
+                if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
+                    $type = 'jpg';
+                }
+            } else {
+                $type = 'jpg';
+            }
+            $base64Data = base64_decode($base64);
+            if ($base64Data !== false) {
+                $fileName = 'menu_photos/menu_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $type;
+                \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $base64Data);
+                $data['foto_menu'] = $fileName;
+            }
         } elseif ($request->filled('foto_url')) {
             $data['foto_menu'] = $request->foto_url;
         }
@@ -241,8 +258,25 @@ class MobileApiController extends Controller
 
         if ($request->hasFile('foto_menu')) {
             $data['foto_menu'] = $request->file('foto_menu')->store('menu_photos', 'public');
+        } elseif ($request->filled('foto_base64')) {
+            $base64 = $request->foto_base64;
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64, $type)) {
+                $base64 = substr($base64, strpos($base64, ',') + 1);
+                $type = strtolower($type[1]);
+                if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
+                    $type = 'jpg';
+                }
+            } else {
+                $type = 'jpg';
+            }
+            $base64Data = base64_decode($base64);
+            if ($base64Data !== false) {
+                $fileName = 'menu_photos/menu_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $type;
+                \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $base64Data);
+                $data['foto_menu'] = $fileName;
+            }
         } elseif ($request->filled('foto_url')) {
-            $data['foto_url'] = $request->foto_url;
+            $data['foto_menu'] = $request->foto_url;
         }
 
         $menu->update($data);

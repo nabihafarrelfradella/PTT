@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Menu extends Model
 {
+    protected $appends = [
+        'foto_url',
+        'kategori_display',
+        'stock_display',
+        'effective_category',
+    ];
+
     protected $fillable = [
         'kantin_id',
         'nama_menu',
